@@ -46,7 +46,18 @@ class _CounterWidgetState extends State<CounterWidget> {
   @override
   Widget build(BuildContext context) {
     return !visible
-        ? SizedBox()
+        ? Card(
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: 50.0,
+              child: Center(
+                child: Opacity(
+                  opacity: 0.5,
+                  child: const Text("Counter deleted"),
+                ),
+              ),
+            ),
+          )
         : Card(
             child: Padding(
               padding: const EdgeInsets.only(
