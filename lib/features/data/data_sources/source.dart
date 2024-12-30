@@ -9,7 +9,8 @@ class Source {
   // private constructor
   Source._();
 
-  final String dbName = "main";
+  final String dbName = "main.db";
+  final String tblName = "counter_tbl";
 
   static Source getInstance() => Source._();
 
@@ -22,13 +23,13 @@ class Source {
     //   app data path
     Directory appDir = await getApplicationDocumentsDirectory();
 
-    String dbPath = join(appDir.path, "$dbName.db");
+    String dbPath = join(appDir.path, dbName);
 
     //   database path
     return await openDatabase(
       dbPath,
       onCreate: (dbPath, version) => dbPath.execute(
-          "CREATE TABLE $dbName (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, count INTEGER)"),
+          "CREATE TABLE $tblName (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, count INTEGER)"),
       version: version,
     );
   }
@@ -42,21 +43,21 @@ class Source {
   // reset database
   Future<bool> resetDb() async {
     Database? tempDb = await getDb();
-    int rowAffected = await tempDb.delete(dbName);
+    int rowAffected = await tempDb.delete(tblName);
     return rowAffected > 0 ? true : false;
   }
 
   // get
   Future<List<Map<String, dynamic>>> getCounters() async {
     Database? tempDb = await getDb();
-    List<Map<String, dynamic>> data = await tempDb.query(dbName);
+    List<Map<String, dynamic>> data = await tempDb.query(tblName);
     return data;
   }
 
   // insert
   Future<bool> insertCounter() async {
     Database? tempDb = await getDb();
-    int rowAffected = await tempDb.insert(dbName, {
+    int rowAffected = await tempDb.insert(tblName, {
       'name': 'counter',
       'count': 0,
     });
@@ -68,7 +69,7 @@ class Source {
   Future<bool> updateCounter(int id, int count) async {
     Database? tempDb = await getDb();
     int rowAffected = await tempDb.update(
-      dbName,
+      tblName,
       {
         'count': count,
       },
@@ -84,7 +85,7 @@ class Source {
     Database? tempDb = await getDb();
 
     int rowAffected = await tempDb.delete(
-      dbName,
+      tblName,
       where: "id = ?",
       whereArgs: [id],
     );
